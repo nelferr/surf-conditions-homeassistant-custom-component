@@ -5,7 +5,10 @@ blueprint:
     choose. Getting light in the morning does not count as improving: that is what
     the morning digest is for.
   domain: automation
+  author: nelferr
   source_url: https://github.com/nelferr/surf-conditions-homeassistant-custom-component/blob/main/blueprints/automation/surf_conditions/live_alert.yaml
+  homeassistant:
+    min_version: "2024.10.0"
   input:
     rating:
       name: Rating
@@ -16,6 +19,13 @@ blueprint:
             - integration: surf_conditions
               domain: sensor
               device_class: enum
+    notify_target:
+      name: Send to
+      description: One or more phones with the Home Assistant app, or any other notifier.
+      selector:
+        target:
+          entity:
+            - domain: notify
     ratings:
       name: Alert when it becomes
       default:
@@ -43,13 +53,6 @@ blueprint:
           step: 0.5
           unit_of_measurement: h
           mode: box
-    notify_device:
-      name: Phone
-      description: A phone or tablet with the Home Assistant app.
-      selector:
-        device:
-          filter:
-            - integration: mobile_app
 
 mode: single
 
@@ -81,10 +84,10 @@ conditions:
          or now() - this.attributes.last_triggered >= timedelta(hours=quiet_hours) }}
 
 actions:
-  - domain: mobile_app
-    type: notify
-    device_id: !input notify_device
-    title: >-
-      {{ device_attr(trigger.entity_id, 'name_by_user') or device_attr(trigger.entity_id, 'name') }}
-      is {{ trigger.to_state.state }} now
-    message: "{{ trigger.to_state.attributes.conditions }}."
+  - action: notify.send_message
+    target: !input notify_target
+    data:
+      title: >-
+        {{ device_attr(trigger.entity_id, 'name_by_user') or device_attr(trigger.entity_id, 'name') }}
+        is {{ trigger.to_state.state }} now
+      message: "{{ trigger.to_state.attributes.conditions }}."

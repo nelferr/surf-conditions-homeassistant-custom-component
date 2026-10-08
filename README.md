@@ -100,8 +100,8 @@ Each spot is a device with these sensors:
 ## Notifications
 
 Two blueprints are in `blueprints/automation/surf_conditions`. Import them, then
-create an automation from each, picking the spot's sensors and a phone with the
-Home Assistant app.
+create an automation from each, picking the spot's sensors and where to send the
+message: any notify entity, such as a phone with the Home Assistant app.
 
 - **Morning digest** sends one message at first light with the day's windows,
   when the day is great, good or flat (or whichever ratings you pick):

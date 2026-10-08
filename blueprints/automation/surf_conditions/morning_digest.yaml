@@ -4,7 +4,10 @@ blueprint:
     Sends one notification at first light with the day's surf windows for a spot,
     when the day is one of the ratings you choose.
   domain: automation
+  author: nelferr
   source_url: https://github.com/nelferr/surf-conditions-homeassistant-custom-component/blob/main/blueprints/automation/surf_conditions/morning_digest.yaml
+  homeassistant:
+    min_version: "2024.10.0"
   input:
     outlook:
       name: Today
@@ -24,6 +27,13 @@ blueprint:
             - integration: surf_conditions
               domain: sensor
               device_class: timestamp
+    notify_target:
+      name: Send to
+      description: One or more phones with the Home Assistant app, or any other notifier.
+      selector:
+        target:
+          entity:
+            - domain: notify
     ratings:
       name: Send when the day is
       default:
@@ -44,13 +54,6 @@ blueprint:
               value: bad
             - label: Terrible
               value: terrible
-    notify_device:
-      name: Phone
-      description: A phone or tablet with the Home Assistant app.
-      selector:
-        device:
-          filter:
-            - integration: mobile_app
 
 mode: single
 
@@ -67,10 +70,10 @@ conditions:
     value_template: "{{ states(outlook) in ratings }}"
 
 actions:
-  - domain: mobile_app
-    type: notify
-    device_id: !input notify_device
-    title: "{{ device_attr(outlook, 'name_by_user') or device_attr(outlook, 'name') }} today"
-    message: >-
-      {{ [state_attr(outlook, 'summary'), state_attr(outlook, 'conditions')]
-         | select | join('. ') }}.
+  - action: notify.send_message
+    target: !input notify_target
+    data:
+      title: "{{ device_attr(outlook, 'name_by_user') or device_attr(outlook, 'name') }} today"
+      message: >-
+        {{ [state_attr(outlook, 'summary'), state_attr(outlook, 'conditions')]
+           | select | join('. ') }}.
