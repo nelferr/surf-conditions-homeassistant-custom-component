@@ -63,11 +63,11 @@ triggers:
 
 variables:
   outlook: !input outlook
-  ratings: !input ratings
 
 conditions:
-  - condition: template
-    value_template: "{{ states(outlook) in ratings }}"
+  - condition: state
+    entity_id: !input outlook
+    state: !input ratings
 
 actions:
   - action: notify.send_message

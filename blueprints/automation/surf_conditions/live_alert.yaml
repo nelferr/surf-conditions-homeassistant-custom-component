@@ -59,9 +59,13 @@ mode: single
 triggers:
   - trigger: state
     entity_id: !input rating
+    to: !input ratings
+    not_from:
+      - dark
+      - unavailable
+      - unknown
 
 variables:
-  ratings: !input ratings
   quiet_hours: !input quiet_hours
   worst_to_best:
     - terrible
@@ -71,14 +75,15 @@ variables:
     - great
 
 conditions:
-  - condition: template
+  - alias: The rating got better
+    condition: template
     value_template: >-
-      {{ trigger.to_state.state in ratings
-         and trigger.from_state is not none
+      {{ trigger.from_state is not none
          and trigger.from_state.state in worst_to_best
          and worst_to_best.index(trigger.to_state.state)
            > worst_to_best.index(trigger.from_state.state) }}
-  - condition: template
+  - alias: The quiet time after the last alert is over
+    condition: template
     value_template: >-
       {{ this.attributes.last_triggered is none
          or now() - this.attributes.last_triggered >= timedelta(hours=quiet_hours) }}
