@@ -1,0 +1,196 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add a surf spot",
+        "description": "The forecast comes from Open-Meteo, which is free and needs no key.",
+        "data": {
+          "name": "Name",
+          "location": "Location",
+          "beach_facing": "Direction the beach faces"
+        },
+        "data_description": {
+          "location": "Put the marker on the sand or just off it.",
+          "beach_facing": "The compass bearing you look along when you stand on the sand facing the sea: 270 for a beach that faces west. It decides which wind is offshore."
+        }
+      },
+      "rules": {
+        "title": "What makes it good",
+        "description": "One problem makes the rating bad and two make it terrible. With no problems it is good, or great when everything is ideal. All of this can be changed later.",
+        "data": {
+          "wave_min": "Flat below",
+          "wave_max": "Waves get big above",
+          "wave_terrible": "Waves are too big above",
+          "period_ideal": "Ideal wave period from",
+          "period_min": "Shortest acceptable wave period",
+          "gust_max": "Strongest acceptable gusts",
+          "offshore_gust_max": "Strongest acceptable offshore gusts",
+          "gust_terrible": "Gusts are too strong from",
+          "calm_wind": "Calm below",
+          "low_tide_hours": "Low tide lasts",
+          "min_window_hours": "Shortest window",
+          "tide_offset": "Tide time correction"
+        },
+        "data_description": {
+          "wave_min": "Smaller waves show as flat, whatever the wind and tide.",
+          "wave_max": "Bigger waves are a problem.",
+          "wave_terrible": "Bigger waves make the rating terrible.",
+          "period_ideal": "With a shorter period the waves come closer together, which is good at best.",
+          "period_min": "A shorter period is a problem.",
+          "gust_max": "Stronger gusts are a problem.",
+          "offshore_gust_max": "Offshore wind stays good up to here.",
+          "gust_terrible": "Gusts this strong make the rating terrible.",
+          "calm_wind": "Average wind lighter than this is ideal from any direction.",
+          "low_tide_hours": "Hours either side of low water that count as low tide, which is a problem. Set to 0 to ignore the tide.",
+          "min_window_hours": "Shorter stretches are not reported as a window.",
+          "tide_offset": "Minutes added to Open-Meteo's tide times. Compare the next high tide sensor with a local tide table to check it."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Open-Meteo could not be reached. Try again in a moment.",
+      "no_waves": "Open-Meteo has no wave forecast for this place. Move the marker closer to the sea."
+    },
+    "abort": {
+      "already_configured": "A spot with this name already exists."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Spot settings",
+        "description": "One problem makes the rating bad and two make it terrible. With no problems it is good, or great when everything is ideal.",
+        "data": {
+          "location": "Location",
+          "beach_facing": "Direction the beach faces",
+          "wave_min": "Flat below",
+          "wave_max": "Waves get big above",
+          "wave_terrible": "Waves are too big above",
+          "period_ideal": "Ideal wave period from",
+          "period_min": "Shortest acceptable wave period",
+          "gust_max": "Strongest acceptable gusts",
+          "offshore_gust_max": "Strongest acceptable offshore gusts",
+          "gust_terrible": "Gusts are too strong from",
+          "calm_wind": "Calm below",
+          "low_tide_hours": "Low tide lasts",
+          "min_window_hours": "Shortest window",
+          "tide_offset": "Tide time correction"
+        },
+        "data_description": {
+          "location": "Put the marker on the sand or just off it.",
+          "beach_facing": "The compass bearing you look along when you stand on the sand facing the sea: 270 for a beach that faces west. It decides which wind is offshore.",
+          "wave_min": "Smaller waves show as flat, whatever the wind and tide.",
+          "wave_max": "Bigger waves are a problem.",
+          "wave_terrible": "Bigger waves make the rating terrible.",
+          "period_ideal": "With a shorter period the waves come closer together, which is good at best.",
+          "period_min": "A shorter period is a problem.",
+          "gust_max": "Stronger gusts are a problem.",
+          "offshore_gust_max": "Offshore wind stays good up to here.",
+          "gust_terrible": "Gusts this strong make the rating terrible.",
+          "calm_wind": "Average wind lighter than this is ideal from any direction.",
+          "low_tide_hours": "Hours either side of low water that count as low tide, which is a problem. Set to 0 to ignore the tide.",
+          "min_window_hours": "Shorter stretches are not reported as a window.",
+          "tide_offset": "Minutes added to Open-Meteo's tide times. Compare the next high tide sensor with a local tide table to check it."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "rating": {
+        "name": "Rating",
+        "state": {
+          "great": "Great",
+          "good": "Good",
+          "flat": "Flat",
+          "bad": "Bad",
+          "terrible": "Terrible",
+          "dark": "Dark"
+        }
+      },
+      "today": {
+        "name": "Today",
+        "state": {
+          "great": "Great",
+          "good": "Good",
+          "flat": "Flat",
+          "bad": "Bad",
+          "terrible": "Terrible",
+          "dark": "Dark"
+        }
+      },
+      "tomorrow": {
+        "name": "Tomorrow",
+        "state": {
+          "great": "Great",
+          "good": "Good",
+          "flat": "Flat",
+          "bad": "Bad",
+          "terrible": "Terrible",
+          "dark": "Dark"
+        }
+      },
+      "day_after_tomorrow": {
+        "name": "Day after tomorrow",
+        "state": {
+          "great": "Great",
+          "good": "Good",
+          "flat": "Flat",
+          "bad": "Bad",
+          "terrible": "Terrible",
+          "dark": "Dark"
+        }
+      },
+      "wave_height": {
+        "name": "Wave height"
+      },
+      "wave_period": {
+        "name": "Wave period"
+      },
+      "wind_gust": {
+        "name": "Wind gusts"
+      },
+      "wind_speed": {
+        "name": "Wind speed"
+      },
+      "wind_direction": {
+        "name": "Wind direction"
+      },
+      "wind_type": {
+        "name": "Wind type",
+        "state": {
+          "offshore": "Offshore",
+          "cross_shore": "Cross-shore",
+          "onshore": "Onshore"
+        }
+      },
+      "tide_height": {
+        "name": "Tide height"
+      },
+      "tide": {
+        "name": "Tide",
+        "state": {
+          "low": "Low",
+          "rising": "Rising",
+          "high": "High",
+          "falling": "Falling"
+        }
+      },
+      "next_high_tide": {
+        "name": "Next high tide"
+      },
+      "next_low_tide": {
+        "name": "Next low tide"
+      },
+      "water_temperature": {
+        "name": "Water temperature"
+      },
+      "first_light": {
+        "name": "First light"
+      },
+      "last_light": {
+        "name": "Last light"
+      }
+    }
+  }
+}

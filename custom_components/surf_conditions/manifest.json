@@ -1,0 +1,12 @@
+{
+  "domain": "surf_conditions",
+  "name": "Surf Conditions",
+  "codeowners": ["@nelferr"],
+  "config_flow": true,
+  "documentation": "https://github.com/nelferr/surf-conditions-homeassistant-custom-component",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/nelferr/surf-conditions-homeassistant-custom-component/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

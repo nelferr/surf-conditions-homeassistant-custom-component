@@ -1,0 +1,76 @@
+blueprint:
+  name: Surf Conditions - morning digest
+  description: >-
+    Sends one notification at first light with the day's surf windows for a spot,
+    when the day is one of the ratings you choose.
+  domain: automation
+  source_url: https://github.com/nelferr/surf-conditions-homeassistant-custom-component/blob/main/blueprints/automation/surf_conditions/morning_digest.yaml
+  input:
+    outlook:
+      name: Today
+      description: The spot's Today sensor.
+      selector:
+        entity:
+          filter:
+            - integration: surf_conditions
+              domain: sensor
+              device_class: enum
+    first_light:
+      name: First light
+      description: The spot's First light sensor. The digest is sent at that time.
+      selector:
+        entity:
+          filter:
+            - integration: surf_conditions
+              domain: sensor
+              device_class: timestamp
+    ratings:
+      name: Send when the day is
+      default:
+        - great
+        - good
+        - flat
+      selector:
+        select:
+          multiple: true
+          options:
+            - label: Great
+              value: great
+            - label: Good
+              value: good
+            - label: Flat
+              value: flat
+            - label: Bad
+              value: bad
+            - label: Terrible
+              value: terrible
+    notify_device:
+      name: Phone
+      description: A phone or tablet with the Home Assistant app.
+      selector:
+        device:
+          filter:
+            - integration: mobile_app
+
+mode: single
+
+triggers:
+  - trigger: time
+    at: !input first_light
+
+variables:
+  outlook: !input outlook
+  ratings: !input ratings
+
+conditions:
+  - condition: template
+    value_template: "{{ states(outlook) in ratings }}"
+
+actions:
+  - domain: mobile_app
+    type: notify
+    device_id: !input notify_device
+    title: "{{ device_attr(outlook, 'name_by_user') or device_attr(outlook, 'name') }} today"
+    message: >-
+      {{ [state_attr(outlook, 'summary'), state_attr(outlook, 'conditions')]
+         | select | join('. ') }}.

@@ -1,0 +1,90 @@
+blueprint:
+  name: Surf Conditions - live alert
+  description: >-
+    Sends a notification when a spot's rating improves to one of the ratings you
+    choose. Getting light in the morning does not count as improving: that is what
+    the morning digest is for.
+  domain: automation
+  source_url: https://github.com/nelferr/surf-conditions-homeassistant-custom-component/blob/main/blueprints/automation/surf_conditions/live_alert.yaml
+  input:
+    rating:
+      name: Rating
+      description: The spot's Rating sensor.
+      selector:
+        entity:
+          filter:
+            - integration: surf_conditions
+              domain: sensor
+              device_class: enum
+    ratings:
+      name: Alert when it becomes
+      default:
+        - great
+        - good
+        - flat
+      selector:
+        select:
+          multiple: true
+          options:
+            - label: Great
+              value: great
+            - label: Good
+              value: good
+            - label: Flat
+              value: flat
+    quiet_hours:
+      name: Quiet time after an alert
+      description: No further alert is sent for this long.
+      default: 3
+      selector:
+        number:
+          min: 0
+          max: 24
+          step: 0.5
+          unit_of_measurement: h
+          mode: box
+    notify_device:
+      name: Phone
+      description: A phone or tablet with the Home Assistant app.
+      selector:
+        device:
+          filter:
+            - integration: mobile_app
+
+mode: single
+
+triggers:
+  - trigger: state
+    entity_id: !input rating
+
+variables:
+  ratings: !input ratings
+  quiet_hours: !input quiet_hours
+  worst_to_best:
+    - terrible
+    - bad
+    - flat
+    - good
+    - great
+
+conditions:
+  - condition: template
+    value_template: >-
+      {{ trigger.to_state.state in ratings
+         and trigger.from_state is not none
+         and trigger.from_state.state in worst_to_best
+         and worst_to_best.index(trigger.to_state.state)
+           > worst_to_best.index(trigger.from_state.state) }}
+  - condition: template
+    value_template: >-
+      {{ this.attributes.last_triggered is none
+         or now() - this.attributes.last_triggered >= timedelta(hours=quiet_hours) }}
+
+actions:
+  - domain: mobile_app
+    type: notify
+    device_id: !input notify_device
+    title: >-
+      {{ device_attr(trigger.entity_id, 'name_by_user') or device_attr(trigger.entity_id, 'name') }}
+      is {{ trigger.to_state.state }} now
+    message: "{{ trigger.to_state.attributes.conditions }}."

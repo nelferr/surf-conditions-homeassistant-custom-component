@@ -1,0 +1,118 @@
+# A dashboard for one spot, built from Mushroom template cards and core cards.
+# The entity ids assume the spot is called Magoito: replace "magoito" with your spot's name.
+views:
+  - title: Surf
+    path: surf
+    icon: mdi:surfing
+    type: sections
+    max_columns: 2
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Magoito
+            heading_style: title
+            icon: mdi:surfing
+          - type: custom:mushroom-template-card
+            entity: sensor.magoito_rating
+            icon: mdi:surfing
+            primary: "{{ state_translated('sensor.magoito_rating') }}"
+            secondary: >-
+              {% if is_state('sensor.magoito_rating', 'dark') %}
+              First light at {{ states('sensor.magoito_first_light') | as_timestamp | timestamp_custom('%H:%M') }}
+              {% else %}
+              {{ state_attr('sensor.magoito_rating', 'reason') or state_attr('sensor.magoito_rating', 'conditions') }}
+              {% endif %}
+            color: >-
+              {{ {'great': 'green', 'good': 'light-green', 'flat': 'blue', 'bad': 'orange',
+                  'terrible': 'red'}.get(states('sensor.magoito_rating'), 'disabled') }}
+            multiline_secondary: true
+            tap_action:
+              action: more-info
+            grid_options:
+              columns: full
+          - type: custom:mushroom-template-card
+            entity: sensor.magoito_today
+            icon: mdi:calendar-today
+            primary: "Today: {{ state_translated('sensor.magoito_today') }}"
+            secondary: "{{ state_attr('sensor.magoito_today', 'summary') }}"
+            color: >-
+              {{ {'great': 'green', 'good': 'light-green', 'flat': 'blue', 'bad': 'orange',
+                  'terrible': 'red'}.get(states('sensor.magoito_today'), 'disabled') }}
+            multiline_secondary: true
+            tap_action:
+              action: more-info
+            grid_options:
+              columns: full
+          - type: custom:mushroom-template-card
+            entity: sensor.magoito_tomorrow
+            icon: mdi:calendar-arrow-right
+            primary: "Tomorrow: {{ state_translated('sensor.magoito_tomorrow') }}"
+            secondary: "{{ state_attr('sensor.magoito_tomorrow', 'summary') }}"
+            color: >-
+              {{ {'great': 'green', 'good': 'light-green', 'flat': 'blue', 'bad': 'orange',
+                  'terrible': 'red'}.get(states('sensor.magoito_tomorrow'), 'disabled') }}
+            multiline_secondary: true
+            tap_action:
+              action: more-info
+            grid_options:
+              columns: full
+          - type: custom:mushroom-template-card
+            entity: sensor.magoito_day_after_tomorrow
+            icon: mdi:calendar-end
+            primary: >-
+              {{ as_datetime(state_attr('sensor.magoito_day_after_tomorrow', 'date')).strftime('%A') }}:
+              {{ state_translated('sensor.magoito_day_after_tomorrow') }}
+            secondary: "{{ state_attr('sensor.magoito_day_after_tomorrow', 'summary') }}"
+            color: >-
+              {{ {'great': 'green', 'good': 'light-green', 'flat': 'blue', 'bad': 'orange',
+                  'terrible': 'red'}.get(states('sensor.magoito_day_after_tomorrow'), 'disabled') }}
+            multiline_secondary: true
+            tap_action:
+              action: more-info
+            grid_options:
+              columns: full
+          - type: markdown
+            title: Hour by hour
+            content: |
+              {% set square = {'great': '🟩', 'good': '🟨', 'flat': '🟦', 'bad': '🟧', 'terrible': '🟥'} -%}
+              {% set hours = state_attr('sensor.magoito_rating', 'forecast') or [] -%}
+              {% for day in hours | map(attribute='time') | map('truncate', 10, true, '') | unique -%}
+              {% set lit = hours | selectattr('time', 'match', day) | rejectattr('rating', 'eq', 'dark') | list -%}
+              {% if lit -%}
+              **{{ as_datetime(day).strftime('%a') }}** {{ lit[0].time[11:13] }}h {% for hour in lit %}{{ square.get(hour.rating, '⬜') }}{% endfor %} {{ '%02d' % (lit[-1].time[11:13] | int + 1) }}h
+              {% endif -%}
+              {% endfor %}
+              🟩 great 🟨 good 🟦 flat 🟧 bad 🟥 terrible
+            grid_options:
+              columns: full
+      - type: grid
+        cards:
+          - type: heading
+            heading: Conditions
+            heading_style: title
+            icon: mdi:waves
+          - type: tile
+            entity: sensor.magoito_wave_height
+          - type: tile
+            entity: sensor.magoito_wave_period
+          - type: tile
+            entity: sensor.magoito_wind_gusts
+          - type: tile
+            entity: sensor.magoito_wind_type
+          - type: tile
+            entity: sensor.magoito_wind_speed
+          - type: tile
+            entity: sensor.magoito_wind_direction
+          - type: tile
+            entity: sensor.magoito_tide
+          - type: tile
+            entity: sensor.magoito_tide_height
+          - type: tile
+            entity: sensor.magoito_next_high_tide
+          - type: tile
+            entity: sensor.magoito_next_low_tide
+          - type: tile
+            entity: sensor.magoito_water_temperature
+          - type: tile
+            entity: sensor.magoito_last_light
