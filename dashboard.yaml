@@ -1,4 +1,5 @@
-# A dashboard for one spot, built from Mushroom template cards and core cards.
+# A dashboard for one spot, built from Mushroom template cards, core cards and the
+# integration's own hour-by-hour card.
 # The entity ids assume the spot is called Magoito: replace "magoito" with your spot's name.
 views:
   - title: Surf
@@ -72,18 +73,9 @@ views:
               action: more-info
             grid_options:
               columns: full
-          - type: markdown
+          - type: custom:surf-conditions-card
+            entity: sensor.magoito_rating
             title: Hour by hour
-            content: |
-              {% set square = {'great': '🟩', 'good': '🟨', 'flat': '🟦', 'bad': '🟧', 'terrible': '🟥'} -%}
-              {% set hours = state_attr('sensor.magoito_rating', 'forecast') or [] -%}
-              {% for day in hours | map(attribute='time') | map('truncate', 10, true, '') | unique -%}
-              {% set lit = hours | selectattr('time', 'match', day) | rejectattr('rating', 'eq', 'dark') | list -%}
-              {% if lit -%}
-              **{{ as_datetime(day).strftime('%a') }}** {{ lit[0].time[11:13] }}h {% for hour in lit %}{{ square.get(hour.rating, '⬜') }}{% endfor %} {{ '%02d' % (lit[-1].time[11:13] | int + 1) }}h
-              {% endif -%}
-              {% endfor %}
-              🟩 great 🟨 good 🟦 flat 🟧 bad 🟥 terrible
             grid_options:
               columns: full
       - type: grid

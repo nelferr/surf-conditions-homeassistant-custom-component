@@ -88,7 +88,7 @@ on the integration page. Setting **Low tide lasts** to 0 ignores the tide.
 Each spot is a device with these sensors:
 
 - Rating, with the reason, a one-line summary of the conditions and the hourly
-  forecast as attributes
+  forecast as attributes. Each hour of the forecast has its own rating and reason
 - Today, Tomorrow, Day after tomorrow: each day's outlook, with the windows, a
   summary line and the conditions during the windows as attributes
 - Wave height, Wave period
@@ -117,12 +117,31 @@ message: any notify entity, such as a phone with the Home Assistant app.
 
 The summary lines are in English with metric units.
 
+## Hour-by-hour card
+
+The integration brings its own dashboard card. It draws a coloured square for
+every hour of light, one row per day, with the hours already gone faded and a dot
+on the current one. A panel underneath gives one hour's rating and what holds it
+back: the current hour, until you tap a square. Tap the same square again to go
+back to the current hour.
+
+```yaml
+type: custom:surf-conditions-card
+entity: sensor.magoito_rating
+title: Hour by hour
+```
+
+`entity` is a spot's Rating sensor and `title` is optional. The card is also in
+the card picker, as Surf Conditions. Home Assistant loads it by itself, so there is
+no resource to register; reload the browser page once after installing or updating
+the integration.
+
 ## Dashboard
 
 `dashboard.yaml` is a ready-made dashboard for one spot: the rating in colour, the
-three outlooks, a coloured square per hour of light, and the conditions as tiles.
-It needs [Mushroom](https://github.com/piitaya/lovelace-mushroom). Create a
-dashboard, open its raw configuration editor and paste the file in, replacing
+three outlooks, the hour-by-hour card and the conditions as tiles. The rating and
+the outlooks need [Mushroom](https://github.com/piitaya/lovelace-mushroom). Create
+a dashboard, open its raw configuration editor and paste the file in, replacing
 `magoito` in the entity ids with your spot's name.
 
 ## Development

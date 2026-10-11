@@ -59,6 +59,7 @@ def _forecast_row(slot: Slot, zone: tzinfo) -> dict[str, Any]:
     return {
         "time": slot.start.astimezone(zone).isoformat(),
         "rating": slot.rating,
+        "reason": slot.assessment.reason,
         "wave_height": slot.hour.wave_height,
         "period": slot.hour.period,
         "wind_gust": slot.hour.wind_gust,

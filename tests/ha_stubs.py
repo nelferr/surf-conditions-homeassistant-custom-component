@@ -65,6 +65,15 @@ def install() -> None:
     module("homeassistant")
     module("homeassistant.helpers")
     module("homeassistant.util")
+    module("homeassistant.components")
+    module("homeassistant.components.frontend", add_extra_js_url=lambda hass, url: None)
+    module("homeassistant.components.http", StaticPathConfig=lambda *args: args)
+    module("homeassistant.helpers.typing", ConfigType=dict)
+    module("homeassistant.loader", async_get_integration=None)
+    sys.modules["homeassistant.helpers"].config_validation = module(
+        "homeassistant.helpers.config_validation",
+        config_entry_only_config_schema=lambda domain: None,
+    )
     module("homeassistant.config_entries", ConfigEntry=_Generic)
     module(
         "homeassistant.const",
