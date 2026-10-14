@@ -308,9 +308,14 @@ class SurfConditionsCard extends HTMLElement {
   }
 }
 
-if (!customElements.get("surf-conditions-card")) {
-  customElements.define("surf-conditions-card", SurfConditionsCard);
-}
+// Home Assistant's app replaces the custom element registry when it starts, and dashboards only
+// look cards up in the replacement. This file is added to every page and can run before the app
+// has done that, so define the card once the app's own root element exists.
+customElements.whenDefined("home-assistant").then(() => {
+  if (!window.customElements.get("surf-conditions-card")) {
+    window.customElements.define("surf-conditions-card", SurfConditionsCard);
+  }
+});
 window.customCards = window.customCards || [];
 if (!window.customCards.some((card) => card.type === "surf-conditions-card")) {
   window.customCards.push({
